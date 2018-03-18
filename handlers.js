@@ -15,6 +15,17 @@ module.exports = function(io) {
             io.emit('chat message', msgObj);
         });
     };
+
+    exports.infoUpdate = user => {
+        var socket = user.socket;
+        socket.on('update user info', strOb => {
+            console.log("updateing user info!!!!!!!!");
+            let ob = JSON.parse(strOb);
+            user.name = ob.name;
+            console.log (ob.name);
+        });
+    };
+    
     return exports;
 
 };

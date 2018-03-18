@@ -1,53 +1,41 @@
-'use strict';
+/*
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+*/
 
-//Not sure how many of these I can change to const. Perhaps all of them.
-let express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var handlers = require('./handlers.js')(io);
-
-const public = __dirname;
-app.use(express.static(public));
-
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
-});
-
-//io.emit('update', `Server restarted at ${(new Date).toString()}`);
-
-//Is making users global a dumb idea?
-let users = [];
-
-// TODO: Combine io connection event handler with initSocket
-function initSocket(user) {
-    handlers.chatMessage(user);
-
-    let socket = user.socket;
-    
-	socket.on('disconnect', function(reason){
-		io.emit('update', `${user.name} disconnected because ${reason}`);
-		console.log('user disconnected');
-	});
+function getNickname() {
+    let username = prompt("Enter your nickname:");
+    return username;
 }
 
-io.on('connection', function(socket){
-	console.log('a user connected'); // debugging
 
-    const userid = users.length;
-    const username = `User ${userid}`; //Set a default username
-
-    var user = { name: username, id: userid, socket: socket };
-    users.push(user);
-    initSocket(user);
-});
-
-io.on('connection', function(socket){
-	io.emit('update', 'a user connected. LIT');
-});
-
-http.listen(3000, function(){
-	console.log('listening on *:3000');
-});
+document.addEventListener("DOMContentLoaded", function () {
+    function sendUserInfo(ob) {
+        socket.emit('update user info', JSON.stringify(ob));
+    }
+    var socket = io();
     
+    $('form').submit(function(){
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+    });
+    
+    socket.on('chat message', function(msg){
+        $('#messages').append($(`<li>${msg}</li>`));
+    });
 
+    socket.on('update', info => {
+        // TODO: Use vanilla javascript instead of jquery to
+        // append the messages.
+        $('#messages').append($(`<li class="info">${info}</li>`));
+    });
+
+    (function() {
+        var username = getNickname();
+        sendUserInfo({name: username});
+    })();
+});

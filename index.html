@@ -10,10 +10,13 @@
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
 
+    <!-- Move scripts to beginning of file (defer) -->
     <!-- What the hell does this line do? Why is it socket.io locally?
         I don't think the server is serving socket.io -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="index.js" charset="utf-8"></script>
+    <!--
     <script>
       $(function () {
         var socket = io();
@@ -33,6 +36,7 @@
           
       });
     </script>
+    -->
   </body>
 </html>
     
