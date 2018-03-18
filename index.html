@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <link href="./index.css" rel="stylesheet"/>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <!-- What the hell does this line do? Why is it socket.io locally?
+        I don't think the server is serving socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+        $('form').submit(function(){
+          socket.emit('chat message', $('#m').val());
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat message', function(msg){
+            $('#messages').append($(`<li>${msg}</li>`));
+        });
+        socket.on('update', info => {
+          // TODO: Use vanilla javascript instead of jquery to
+          // append the messages.
+            $('#messages').append($(`<li class="info">${info}</li>`));
+        });
+          
+      });
+    </script>
+  </body>
+</html>
+    
