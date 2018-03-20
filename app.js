@@ -24,6 +24,8 @@ function initSocket(user) {
     handlers.chatMessage(user);
     handlers.infoUpdate(user);
 
+    console.log("socket initted");
+
     let socket = user.socket;
     
 	socket.on('disconnect', function(reason){
@@ -44,6 +46,8 @@ io.on('connection', function(socket){
     initSocket(user);
 });
 
-http.listen(3000, function(){
-	console.log('listening on *:3000');
+app.set('port', process.env.PORT || 3000);
+
+http.listen(app.get('port'), function(){
+	console.log('listening on *:' + app.get('port'));
 });
